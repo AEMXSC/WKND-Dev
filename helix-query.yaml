@@ -5,8 +5,6 @@ indices:
     include:
       - '/'
       - '/en/**'
-    exclude:
-      - '/fr/**'
     target: /en/query-index.json
     properties:
       title:
