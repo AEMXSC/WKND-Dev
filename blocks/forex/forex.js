@@ -11,7 +11,7 @@ export default async function decorate(block) {
     .forEach((currency) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><img src="/icons/flag-${currency.currencyCode}.svg" alt="An Flag for ${currency.currencyCode} "></td>
+        <td><img src="${window.hlx.codeBasePath}/icons/flag-${currency.currencyCode}.svg" alt="An Flag for ${currency.currencyCode} "></td>
         <td>${currency.currencyTitle}</td>
         <td>${currency.currencyCode}</td>
         <td>${currency.forex}</td>
