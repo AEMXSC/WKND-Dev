@@ -6,10 +6,11 @@ indices:
       - '/'
       - '/en/**'
     exclude:
-      - /ja/search/**
-      - /search/**
-      - /nav/**
-      - /footer/**
+      - /**/search
+      - /search
+      - /**/nav
+      - /nav
+      - /footer
     target: /en/query-index.json
     properties:
       title:
