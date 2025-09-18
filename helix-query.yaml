@@ -74,3 +74,14 @@ indices:
       - /nav/**
       - /footer/**
     target: /de/query-index.json
+  
+  site-ja:
+    <<: *base-site
+    include:
+      - '/ja'
+      - '/ja/**'
+    exclude:
+      - /search/**
+      - /nav/**
+      - /footer/**
+    target: /ja/query-index.json
