@@ -72,9 +72,9 @@ indices:
       - '/ja'
       - '/ja/**'
     exclude:
-      - /**/search
+      - /ja/nav
       - /search
-      - /**/nav
       - /nav
+      - /ja/footer
       - /footer
     target: /ja/query-index.json
