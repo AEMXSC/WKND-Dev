@@ -47,10 +47,6 @@ indices:
     include:
       - '/fr'
       - '/fr/**'
-    exclude:
-      - /search/**
-      - /nav/**
-      - /footer/**
     target: /fr/query-index.json
 
   site-es:
@@ -58,10 +54,6 @@ indices:
     include:
       - '/es'
       - '/es/**'
-    exclude:
-      - /search/**
-      - /nav/**
-      - /footer/**
     target: /es/query-index.json
 
   site-de:
@@ -69,19 +61,11 @@ indices:
     include:
       - '/de'
       - '/de/**'
-    exclude:
-      - /search/**
-      - /nav/**
-      - /footer/**
     target: /de/query-index.json
-  
+
   site-ja:
     <<: *base-site
     include:
       - '/ja'
       - '/ja/**'
-    exclude:
-      - /search/**
-      - /nav/**
-      - /footer/**
     target: /ja/query-index.json
