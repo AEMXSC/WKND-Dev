@@ -32,9 +32,6 @@ indices:
       contentType:
         select: head > meta[name="content_type"]
         value: attribute(el, "content")
-      languages:
-        select: head > meta[name="languages"]
-        value: attribute(el, "content")
       author:
         select: head > meta[name="author"]
         value: attribute(el, "content")
