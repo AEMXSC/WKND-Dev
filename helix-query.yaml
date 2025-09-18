@@ -6,6 +6,7 @@ indices:
       - '/'
       - '/en/**'
     exclude:
+      - /ja/search/**
       - /search/**
       - /nav/**
       - /footer/**
