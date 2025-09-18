@@ -4,6 +4,7 @@ indices:
   site-en: &base-site
     include:
       - '/'
+      - '/en'
       - '/en/**'
     exclude:
       - /**/search
@@ -70,4 +71,10 @@ indices:
     include:
       - '/ja'
       - '/ja/**'
+    exclude:
+      - /**/search
+      - /search
+      - /**/nav
+      - /nav
+      - /footer
     target: /ja/query-index.json
