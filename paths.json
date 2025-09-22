@@ -8,6 +8,8 @@
     "/content/wknd-universal/language-masters/es:/es",
     "/content/wknd-universal/language-masters/ja/:/ja/",
     "/content/wknd-universal/language-masters/ja:/ja",
+    "/content/wknd-universal/language-masters/de/:/de/",
+    "/content/wknd-universal/language-masters/de:/de",
     "/content/wknd-universal/configuration:/.helix/config.json",
     "/content/wknd-universal/metadata:/metadata.json",
     "/content/wknd-universal/redirects:/redirects.json",
