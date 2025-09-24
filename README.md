@@ -1,4 +1,4 @@
-# WKND Universal Demo (For AEM Edge Delivery Service)
+# AEM Universal Demo (For Edge Delivery Service)
 
 **A modern looking WKND experience:**
 - Custom Themes (with and without code)
