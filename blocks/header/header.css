@@ -169,7 +169,7 @@ header .nav-brand {
 }
 
 .default-theme header .nav-brand {
-  flex-basis: none;
+  flex-basis: unset;
 }
 
 header nav .nav-brand img {
