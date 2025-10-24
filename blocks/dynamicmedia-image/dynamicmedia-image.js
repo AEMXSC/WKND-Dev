@@ -1,7 +1,7 @@
 /**
  * @param {HTMLElement} $block
  */
-export default function decorate(block) {
+export default async function decorate(block) {
   console.log(block);
   // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
   const hostname = window.location.hostname;
