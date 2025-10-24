@@ -69,22 +69,22 @@ export default function decorate(block) {
           //dmUrlEl.remove();
       }
       if(deliveryType === 'dm-openapi'){
-          // ✅ Fix: Clear block first, then keep only the image
-          const imageToKeep = block.children[1]?.querySelector('picture > img')?.cloneNode(true);
-          block.innerHTML = '';
-
-          if(imageToKeep) {
-            block.appendChild(imageToKeep);
+           const imageUrl = dmUrlEl?.getAttribute("href");
+    
+          if(imageUrl) {
+              // Create a new image element
+              const newImageEl = document.createElement('img');
+              newImageEl.setAttribute('src', imageUrl);
+              newImageEl.setAttribute('alt', altText ? altText : 'dynamic media image');
+              newImageEl.className = 'dm-openapi-image';
+              
+              // Clear block and append the new image
+              block.innerHTML = '';
+              block.appendChild(newImageEl);
+          } else {
+              console.error('DM Open API: Image URL not found');
+              block.innerHTML = '';
           }
-          //block.children[1].querySelectorAll('picture > img')[0];
-        /*
-          block.children[6]?.remove();
-          block.children[5]?.remove();
-          block.children[4]?.remove();
-          block.children[3]?.remove();
-          block.children[2]?.remove();  
-          block.children[0]?.remove();    
-        */   
       }
       
   }else{
