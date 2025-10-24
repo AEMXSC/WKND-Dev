@@ -2,99 +2,93 @@
  * @param {HTMLElement} $block
  */
 export default function decorate(block) {
-  console.log(block);
-  // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
-
-  block.querySelectorAll('[data-mode="smartcrop"]').forEach(img => {
-    // Remove S7 attributes to force cleanup
-    img.removeAttribute('data-src');
-    img.removeAttribute('data-mode');
-    img.removeAttribute('data-breakpoints');
+  // Add MutationObserver to watch for property changes
+  const observer = new MutationObserver(() => {
+    // Clean the block before re-decorating to avoid artifacts
+    block.innerHTML = '';
+    decorateBlock(block); // refactor logic to use a helper
   });
 
-  // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
+  observer.observe(block, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
 
-  const hostname = window.location.hostname;
-  const shouldHide = hostname.includes("aem.live") || hostname.includes("aem.page");
+  // Main decoration logic separated for reuse
+  function decorateBlock(block) {
+    console.log(block);
+    // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
+    const hostname = window.location.hostname;
+    const shouldHide = hostname.includes("aem.live") || hostname.includes("aem.page");
 
-  let deliveryType = Array.from(block.children)[0]?.textContent?.trim();
-  let inputs = block.querySelectorAll('.dynamicmedia-image > div');
-      
-  let inputsArray = Array.from(inputs);
-  if(inputsArray.length < 2) {
-    console.log("Missing inputs, expecting 2, ensure both the image and DM URL are set in the dialog");
-    block.innerHTML = ''; 
-    return;
-  }
-  let imageEl = inputs[1]?.getElementsByTagName("img")[0];
-  // Get DM Url input
-  let dmUrlEl = inputs[2]?.getElementsByTagName("a")[0];
-  let rotate = inputs[3]?.textContent?.trim();
-  let flip = inputs[4]?.textContent?.trim();
-  let altText = inputs[6].textContent?.trim();
+    let deliveryType = Array.from(block.children)[0]?.textContent?.trim();
+    let inputs = block.querySelectorAll('.dynamicmedia-image > div');
+        
+    let inputsArray = Array.from(inputs);
+    if(inputsArray.length < 2) {
+      console.log("Missing inputs, expecting 2, ensure both the image and DM URL are set in the dialog");
+      return;
+    }
+    let imageEl = inputs[1]?.getElementsByTagName("img")[0];
+    // Get DM Url input
+    let dmUrlEl = inputs[2]?.getElementsByTagName("a")[0];
+    let rotate = inputs[3]?.textContent?.trim();
+    let flip = inputs[4]?.textContent?.trim();
+    let altText = inputs[6].textContent?.trim();
 
-  if(deliveryType != "na" && shouldHide == false){  
-      if(deliveryType === 'dm'){
-          // Ensure S7 is loaded
-          if (typeof s7responsiveImage !== 'function') {
-            console.error("s7responsiveImage function is not defined, ensure script include is added to head tag");
-            block.innerHTML = '';
-            return;
-          }
-        
-          // Get image
-         
-          if(!imageEl) {
-            console.error("Image element not found, ensure it is defined in the dialog");
-            block.innerHTML = ''; 
-            return;
-          }
-        
-          let imageSrc = imageEl.getAttribute("src");
-          if(!imageSrc) {
-            console.error("Image element source not found, ensure it is defined in the dialog");
-            block.innerHTML = '';
-            return;
-          }
-        
-          // Get imageName from imageSrc expected in the format /content/dam/<...>/<imageName>.<extension>
-          let imageName = imageSrc.split("/").pop().split(".")[0];
-        
+    if(deliveryType != "na" && shouldHide == false){  
+        if(deliveryType === 'dm'){
+            // Ensure S7 is loaded
+            if (typeof s7responsiveImage !== 'function') {
+              console.error("s7responsiveImage function is not defined, ensure script include is added to head tag");
+              return;
+            }
           
-          let dmUrl = dmUrlEl?.getAttribute("href") || "https://smartimaging.scene7.com/is/image/DynamicMediaNA";
-
-          const newImageEl = imageEl.cloneNode(true);
-          newImageEl.setAttribute("data-src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
-          //imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
-          newImageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
-          newImageEl.setAttribute("alt", altText ? altText : 'dynamic media image');
-          newImageEl.setAttribute("data-mode", "smartcrop");
-
-          block.innerHTML = '';
-          block.appendChild(newImageEl);
-          s7responsiveImage(newImageEl);
-        
-          //dmUrlEl.remove();
-      }
-      if(deliveryType === 'dm-openapi'){
-        const imageUrl = dmUrlEl?.getAttribute("href"); 
-        if(imageUrl) {
-            // Create a new image element
-            const newImageEl = document.createElement('img');
-            newImageEl.setAttribute('src', imageUrl);
-            newImageEl.setAttribute('alt', altText ? altText : 'dynamic media image');
-            newImageEl.className = 'dm-openapi-image';
+            // Get image
+           
+            if(!imageEl) {
+              console.error("Image element not found, ensure it is defined in the dialog");
+              return;
+            }
+          
+            let imageSrc = imageEl.getAttribute("src");
+            if(!imageSrc) {
+              console.error("Image element source not found, ensure it is defined in the dialog");
+              return;
+            }
+          
+            // Get imageName from imageSrc expected in the format /content/dam/<...>/<imageName>.<extension>
+            let imageName = imageSrc.split("/").pop().split(".")[0];
+          
             
-            // Clear block and append the new image
+            let dmUrl = dmUrlEl?.getAttribute("href") || "https://smartimaging.scene7.com/is/image/DynamicMediaNA";
+          
+            imageEl.setAttribute("data-src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
+            //imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
+            imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
+            imageEl.setAttribute("alt", altText ? altText : 'dynamic media image');
+            imageEl.setAttribute("data-mode", "smartcrop");
             block.innerHTML = '';
-            block.appendChild(newImageEl);
-        } else {
-            console.error('DM Open API: Image URL not found');
-            block.innerHTML = '';
+            block.appendChild(imageEl);
+            s7responsiveImage(imageEl);
+          
+            //dmUrlEl.remove();
         }
-      }
-      
-  }else{
-    block.innerHTML = '';
+        if(deliveryType === 'dm-openapi'){
+           
+            block.children[6]?.remove();
+            block.children[5]?.remove();
+            block.children[4]?.remove();
+            block.children[3]?.remove();
+            block.children[2]?.remove();  
+            block.children[0]?.remove();       
+        }
+        
+    }else{
+      block.innerHTML = '';
+    }
   }
+
+  decorateBlock(block);
 }
