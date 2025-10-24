@@ -5,7 +5,14 @@ export default function decorate(block) {
   console.log(block);
   // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
 
-  const originalContent = [...block.children];
+  block.querySelectorAll('[data-mode="smartcrop"]').forEach(img => {
+    // Remove S7 attributes to force cleanup
+    img.removeAttribute('data-src');
+    img.removeAttribute('data-mode');
+    img.removeAttribute('data-breakpoints');
+  });
+
+  // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
 
   const hostname = window.location.hostname;
   const shouldHide = hostname.includes("aem.live") || hostname.includes("aem.page");
@@ -55,13 +62,14 @@ export default function decorate(block) {
         
           
           let dmUrl = dmUrlEl?.getAttribute("href") || "https://smartimaging.scene7.com/is/image/DynamicMediaNA";
-          const newImageEl = imageEl.cloneNode(true);
 
+          const newImageEl = imageEl.cloneNode(true);
           newImageEl.setAttribute("data-src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           //imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           newImageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           newImageEl.setAttribute("alt", altText ? altText : 'dynamic media image');
           newImageEl.setAttribute("data-mode", "smartcrop");
+
           block.innerHTML = '';
           block.appendChild(newImageEl);
           s7responsiveImage(newImageEl);
@@ -69,22 +77,21 @@ export default function decorate(block) {
           //dmUrlEl.remove();
       }
       if(deliveryType === 'dm-openapi'){
-           const imageUrl = dmUrlEl?.getAttribute("href");
-    
-          if(imageUrl) {
-              // Create a new image element
-              const newImageEl = document.createElement('img');
-              newImageEl.setAttribute('src', imageUrl);
-              newImageEl.setAttribute('alt', altText ? altText : 'dynamic media image');
-              newImageEl.className = 'dm-openapi-image';
-              
-              // Clear block and append the new image
-              block.innerHTML = '';
-              block.appendChild(newImageEl);
-          } else {
-              console.error('DM Open API: Image URL not found');
-              block.innerHTML = '';
-          }
+        const imageUrl = dmUrlEl?.getAttribute("href"); 
+        if(imageUrl) {
+            // Create a new image element
+            const newImageEl = document.createElement('img');
+            newImageEl.setAttribute('src', imageUrl);
+            newImageEl.setAttribute('alt', altText ? altText : 'dynamic media image');
+            newImageEl.className = 'dm-openapi-image';
+            
+            // Clear block and append the new image
+            block.innerHTML = '';
+            block.appendChild(newImageEl);
+        } else {
+            console.error('DM Open API: Image URL not found');
+            block.innerHTML = '';
+        }
       }
       
   }else{
