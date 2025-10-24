@@ -4,6 +4,9 @@
 export default function decorate(block) {
   console.log(block);
   // this shouldHide logic is temporary till the time DM rendering on published live site is resolved.
+
+  const originalContent = [...block.children];
+
   const hostname = window.location.hostname;
   const shouldHide = hostname.includes("aem.live") || hostname.includes("aem.page");
 
@@ -13,6 +16,7 @@ export default function decorate(block) {
   let inputsArray = Array.from(inputs);
   if(inputsArray.length < 2) {
     console.log("Missing inputs, expecting 2, ensure both the image and DM URL are set in the dialog");
+    block.innerHTML = ''; 
     return;
   }
   let imageEl = inputs[1]?.getElementsByTagName("img")[0];
@@ -27,6 +31,7 @@ export default function decorate(block) {
           // Ensure S7 is loaded
           if (typeof s7responsiveImage !== 'function') {
             console.error("s7responsiveImage function is not defined, ensure script include is added to head tag");
+            block.innerHTML = '';
             return;
           }
         
@@ -34,12 +39,14 @@ export default function decorate(block) {
          
           if(!imageEl) {
             console.error("Image element not found, ensure it is defined in the dialog");
+            block.innerHTML = ''; 
             return;
           }
         
           let imageSrc = imageEl.getAttribute("src");
           if(!imageSrc) {
             console.error("Image element source not found, ensure it is defined in the dialog");
+            block.innerHTML = '';
             return;
           }
         
@@ -48,28 +55,36 @@ export default function decorate(block) {
         
           
           let dmUrl = dmUrlEl?.getAttribute("href") || "https://smartimaging.scene7.com/is/image/DynamicMediaNA";
-        
-          imageEl.setAttribute("data-src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
+          const newImageEl = imageEl.cloneNode(true);
+
+          newImageEl.setAttribute("data-src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
           //imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
-          imageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
-          imageEl.setAttribute("alt", altText ? altText : 'dynamic media image');
-          imageEl.setAttribute("data-mode", "smartcrop");
+          newImageEl.setAttribute("src", dmUrl + (dmUrl.endsWith('/') ? "" : "/") + imageName);
+          newImageEl.setAttribute("alt", altText ? altText : 'dynamic media image');
+          newImageEl.setAttribute("data-mode", "smartcrop");
           block.innerHTML = '';
-          block.appendChild(imageEl);
-          s7responsiveImage(imageEl);
+          block.appendChild(newImageEl);
+          s7responsiveImage(newImageEl);
         
           //dmUrlEl.remove();
       }
       if(deliveryType === 'dm-openapi'){
+          // ✅ Fix: Clear block first, then keep only the image
+          const imageToKeep = block.children[1]?.querySelector('picture > img')?.cloneNode(true);
+          block.innerHTML = '';
 
+          if(imageToKeep) {
+            block.appendChild(imageToKeep);
+          }
           //block.children[1].querySelectorAll('picture > img')[0];
-        
+        /*
           block.children[6]?.remove();
           block.children[5]?.remove();
           block.children[4]?.remove();
           block.children[3]?.remove();
           block.children[2]?.remove();  
-          block.children[0]?.remove();       
+          block.children[0]?.remove();    
+        */   
       }
       
   }else{
